@@ -1,8 +1,7 @@
 const SENSORSTREAM = require('./util/sensorstream');
-const {BME680} = require('./node_modules/jvsbme680/index');
 
 //#############################################
-//##	      	  SETUP SENSORS	 	 					   ##
+//##	      	  SETUP SENSORS	 	     ##
 //#############################################
 
 /* pseudo functions */
