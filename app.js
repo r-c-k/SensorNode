@@ -4,7 +4,7 @@ const SENSORSTREAM = require('./util/sensorstream');
 //##	      	  SETUP SENSORS	 	     ##
 //#############################################
 
-/* pseudo functions */
+/* psuedo sensors */
 
 async function getHumidity () {
 	return await 37.2 + ' %RH';
@@ -25,11 +25,12 @@ async function getPressure () {
 var stream = [];
 
 stream.push(new SENSORSTREAM ({
-  'host': 'http://0.0.0.0',
+  'host': 'http://173.212.218.8',
   'port':  14265,
-  'id':   'MySensorNode',
+  'id':   'RaspBerry',
   'location':  '52.26°N 13.42°E',
-  'tag':  'MYSENSORSTREAM999ONE'
+  'tag':  'SENSORSTREAM999ONE',
+  'seed': generateSeed()
 }))
 
 stream[0].addSource(getHumidity);
@@ -45,8 +46,23 @@ function run () {
     s.handle();
   })
 
-  setTimeout(run, process.argv[2] || 5000);
+  setTimeout(run, process.argv[2] || 10000);
+  /*	 depends on node performance ^^^^^ */
 }
 
 /* start */
 run();
+
+//#############################################
+//##                 HELPER                  ##
+//#############################################
+
+function generateSeed () {
+ var seed = '';
+ var trytes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ9';
+
+ for (var i = 0; i < 81; i++)
+   seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+
+ return seed;
+}
