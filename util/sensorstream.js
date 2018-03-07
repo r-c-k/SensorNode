@@ -8,18 +8,18 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 //##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
-function SENSORSTREAM(s) {
+function SENSORSTREAM(_stream) {
 
-  this.host = s.host || 'localhost';
-  this.port = s.port || 14265;
+  this.host = _stream.host || 'localhost';
+  this.port = _stream.port || 14265;
 
-  this.id = s.id || 'MySensorNode';
-  this.location = s.location || '';
+  this.id = _stream.id || 'MySensorNode';
+  this.location = _stream.location || '';
   this.stream = [];
 
-  this.seed = s.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
-  this.rec_address = s.rec || 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-  this.tag  = s.tag || 'MYSENSORSTREAM';
+  this.seed = _stream.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+  this.rec_address = _stream.rec || 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  this.tag  = _stream.tag || 'MYSENSORSTREAM';
 
   this.address = '';
   this.addr_index = 0;
@@ -31,8 +31,8 @@ function SENSORSTREAM(s) {
 //##                METHODS                  ##
 //#############################################
 
-SENSORSTREAM.prototype.addSource = function(f) {
-  this.stream.push(f);
+SENSORSTREAM.prototype.addSource = function(_f) {
+  this.stream.push(_f);
 }
 
 SENSORSTREAM.prototype.handle = function() {
@@ -49,13 +49,13 @@ SENSORSTREAM.prototype.handle = function() {
   })
 }
 
-SENSORSTREAM.prototype.attachToTangle = function(data) {
+SENSORSTREAM.prototype.attachToTangle = function(_data) {
 
  let json = {
     'id':         this.id,
     'location':   this.location,
     'timestamp':  Date.now() / 1000 | 0,
-    'data':       data,
+    'data':       _data,
  }
 
  console.log("\nJSON:");
