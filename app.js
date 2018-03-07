@@ -46,7 +46,7 @@ function run () {
     s.handle();
   })
 
-  setTimeout(run, process.argv[2] || 10000);
+  setTimeout(run, process.argv[2] || 20000);
   /*	 depends on node performance ^^^^^ */
 }
 
