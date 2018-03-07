@@ -8,18 +8,18 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 //##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
-function SENSORSTREAM(s) {
+function SENSORSTREAM(_stream) {
 
-  this.host = s.host || 'localhost';
-  this.port = s.port || 14265;
+  this.host = _stream.host || 'localhost';
+  this.port = _stream.port || 14265;
 
-  this.id = s.id || 'raspNode';
-  this.location = s.location || '';
+  this.id = _stream.id || 'raspNode';
+  this.location = _stream.location || '';
   this.stream = [];
 
-  this.seed = s.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
-  this.rec_address = s.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /* nowhere */
-  this.tag  = s.tag || 'MYSENSORSTREAM';
+  this.seed = _stream.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+  this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /* nowhere */
+  this.tag  = _stream.tag || 'MYSENSORSTREAM';
 
   this.address = '';
   this.addr_index = 0;
@@ -73,6 +73,7 @@ SENSORSTREAM.prototype.attachToTangle = function(_data) {
 
  let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
  //console.log("\nTRYTES:\n" + trytes);
+
 
  let options = {'index': this.addr_index, 'total': 1}
  /* GENERATE NEW ADDRESS */
