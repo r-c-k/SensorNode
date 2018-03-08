@@ -53,7 +53,7 @@ STREAM.prototype.handle = function() {
 }
 
 //#############################################
-//##            ATTACH TO TANGLE             ##
+//##             INITIATE MAM                ##
 //#############################################
 
 STREAM.prototype.send = function(_data) {
@@ -97,7 +97,7 @@ let json = {
 }
 
 //#############################################
-//##            INITIALISE IOTA              ##
+//##            INITIALIZE IOTA              ##
 //#############################################
 
 STREAM.prototype.initNode = function() {
