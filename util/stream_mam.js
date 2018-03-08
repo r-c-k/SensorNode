@@ -34,7 +34,7 @@ STREAM.prototype.addSource = function(_f) {
 }
 
 //#############################################
-//##          HANDLE SENSORSTREAMS           ##
+//##              HANDLE SOURCES             ##
 //#############################################
 
 STREAM.prototype.handle = function() {
