@@ -30,7 +30,6 @@ stream.push(new STREAM ({
   'id':   'RaspBerry',
   'location':  '52.26°N 13.42°E',
   'tag':  'SENSORSTREAM999ONE',
-  'seed': generateSeed()
 }))
 
 stream[0].addSource(getHumidity);
@@ -53,17 +52,3 @@ function run () {
 
 /* start */
 run();
-
-//#############################################
-//##                 HELPER                  ##
-//#############################################
-
-function generateSeed () {
- var seed = "";
- var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
-
- for (var i = 0; i < 81; i++)
-   seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
-
- return seed;
-}
