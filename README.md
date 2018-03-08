@@ -38,4 +38,5 @@ stream[1].addSource(functionBar);
 ```
 
 > Cool! Whats next?
+
 Thats it. Have fun providing your sensor data over the iota protocol. ;)
