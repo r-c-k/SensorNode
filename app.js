@@ -1,6 +1,9 @@
 const STREAM = require('./util/stream');
 //const STREAM = require('./util/stream_mam');
 
+/* holds our STREAM objects */
+var stream = [];
+
 //#############################################
 //##	      	  SETUP SENSORS	 	     ##
 //#############################################
@@ -22,8 +25,6 @@ async function getPressure () {
 //#############################################
 //##              SETUP STREAMS              ##
 //#############################################
-
-var stream = [];
 
 stream.push(new STREAM ({
   'host': 'http://0.0.0.0',
