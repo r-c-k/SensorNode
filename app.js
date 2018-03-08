@@ -25,7 +25,7 @@ async function getPressure () {
 var stream = [];
 
 stream.push(new STREAM ({
-  'host': 'http://173.212.218.8',
+  'host': 'http://0.0.0.0',
   'port':  14265,
   'id':   'RaspBerry',
   'location':  '52.26°N 13.42°E',
