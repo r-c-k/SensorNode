@@ -93,7 +93,7 @@ STREAM.prototype.attachToTangle = function(_data) {
 
        var inputs = [{
              'keyIndex': self.addr_index,
-             'address':  self.rec_address,
+             'address':  newAddress,
              'security': 1
          }]
 
