@@ -17,7 +17,7 @@ function STREAM(_stream) {
   this.location = _stream.location || '';
   this.sources = [];
 
-  this.seed = _stream.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+  this.seed = _stream.seed || generateSeed();
   this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
   this.tag  = _stream.tag || 'MYSENSORSTREAM';
 
@@ -118,3 +118,17 @@ STREAM.prototype.initNode = function() {
 }
 
 module.exports = STREAM;
+
+//#############################################
+//##                 HELPER                  ##
+//#############################################
+
+function generateSeed () {
+ var seed = "";
+ var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+
+ for (var i = 0; i < 81; i++)
+   seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+
+ return seed;
+}
