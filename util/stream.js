@@ -21,9 +21,6 @@ function STREAM(_stream) {
   this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
   this.tag  = _stream.tag || 'MYSENSORSTREAM';
 
-  this.address = '';
-  this.addr_index = 0;
-
   this.initNode();
 }
 
@@ -51,6 +48,7 @@ STREAM.prototype.handle = function() {
        self.attachToTangle(data);
    }).catch(err => { console.error(err); });
   })
+  
 }
 
 //#############################################
@@ -74,59 +72,37 @@ STREAM.prototype.attachToTangle = function(_data) {
  let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
  //console.log("\nTRYTES:\n" + trytes);
 
- let options = {'index': this.addr_index, 'total': 1}
- /* GENERATE NEW ADDRESS */
- self.iota.api.getNewAddress(self.seed, options, function(err, newAddress) {
-  	if (err) {
-      console.error(err);
-      return -1;
-    } else {
+ console.log('\n[attaching]\n');
 
-      console.log('\nSENDING...');
+ var transfersArray = [{
+       'address': this.rec_address,
+       'value': 0,
+       'message': trytes,
+       'tag': this.tag
+   }]
 
-       var transfersArray = [{
-             'address': self.rec_address,
-             'value': 0,
-             'message': trytes,
-             'tag': self.tag
-         }]
+   /* PREPARE TRANSFERS */
+   this.iota.api.prepareTransfers(this.seed, transfersArray, function(err, bundle) {
 
-       var inputs = [{
-             'keyIndex': self.addr_index,
-             'address':  newAddress,
-             'security': 1
-         }]
+     if (err) {
+       console.error('FAILURE (' + err + ')');
+       return -2;
+     } else {
 
-       self.addr_index += 1;
+       /* PUSH TO TANGLE */
+       self.iota.api.sendTrytes(bundle, 3, 14, function(err, result) {
 
-       /* PREPARE TRANSFERS */
-       self.iota.api.prepareTransfers(self.seed, transfersArray, inputs, function(err, bundle) {
-
-         if (err) {
-           console.error('FAILURE (' + err + ')');
-           self.address_index -= 1;
-           return -2;
-
-         } else {
-
-           /* PUSH TO TANGLE */
-           self.iota.api.sendTrytes(bundle, 3, 14, function(err, result) {
-
-               if (err) {
-                 self.address_index -= 1;
-                 console.error(err);
-                 return -3;
-               } else {
-                 console.log('SUCCESS (hash: ' + result[0].hash + ')');
-               }
-           })
-
-         }
-
+           if (err) {
+             console.error(err);
+             return -3;
+           } else {
+             console.log('SUCCESS (hash: ' + result[0].hash + ')');
+           }
        })
 
-    }
- });
+     }
+
+   })
 
 }
 
