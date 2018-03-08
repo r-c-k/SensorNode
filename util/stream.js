@@ -8,17 +8,17 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 //##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
-function SENSORSTREAM(_stream) {
+function STREAM(_stream) {
 
   this.host = _stream.host || 'localhost';
   this.port = _stream.port || 14265;
 
   this.id = _stream.id || 'raspNode';
   this.location = _stream.location || '';
-  this.stream = [];
+  this.sources = [];
 
   this.seed = _stream.seed || '999999999999999999999999999999999999999999999999999999999999999999999999999999999';
-  this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /* nowhere */
+  this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
   this.tag  = _stream.tag || 'MYSENSORSTREAM';
 
   this.address = '';
@@ -31,23 +31,23 @@ function SENSORSTREAM(_stream) {
 //##            ADD DATA SOURCE              ##
 //#############################################
 
-SENSORSTREAM.prototype.addSource = function(_f) {
-  this.stream.push(_f);
+STREAM.prototype.addSource = function(_f) {
+  this.sources.push(_f);
 }
 
 //#############################################
 //##          HANDLE SENSORSTREAMS           ##
 //#############################################
 
-SENSORSTREAM.prototype.handle = function() {
+STREAM.prototype.handle = function() {
 
   let self = this;
   var data = []
 
-  self.stream.forEach(function(s) {
+  self.sources.forEach(function(s) {
     s().then(result => {
     data.push(result);
-       if (data.length == self.stream.length)
+       if (data.length == self.sources.length)
        self.attachToTangle(data);
    }).catch(err => { console.error(err); });
   })
@@ -57,7 +57,7 @@ SENSORSTREAM.prototype.handle = function() {
 //##            ATTACH TO TANGLE             ##
 //#############################################
 
-SENSORSTREAM.prototype.attachToTangle = function(_data) {
+STREAM.prototype.attachToTangle = function(_data) {
 
  let self = this;
 
@@ -73,7 +73,6 @@ SENSORSTREAM.prototype.attachToTangle = function(_data) {
 
  let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
  //console.log("\nTRYTES:\n" + trytes);
-
 
  let options = {'index': this.addr_index, 'total': 1}
  /* GENERATE NEW ADDRESS */
@@ -135,11 +134,11 @@ SENSORSTREAM.prototype.attachToTangle = function(_data) {
 //##            INITIALISE IOTA              ##
 //#############################################
 
-SENSORSTREAM.prototype.initNode = function() {
+STREAM.prototype.initNode = function() {
   this.iota = new IOTA({
       'host': this.host,
       'port': this.port
   });
 }
 
-module.exports = SENSORSTREAM;
+module.exports = STREAM;
