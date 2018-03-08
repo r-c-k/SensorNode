@@ -6,7 +6,6 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 let MAM = require('./mam.node.js');
 
 let mamState = null;
-let iota = new IOTA({ provider: 'http://localhost:14265' });
 
 //#############################################
 //##        SENSORSTREAM CONSTRUCTOR         ##
@@ -72,23 +71,25 @@ let json = {
  console.log('\n[sending]\n');
 
  // Initiate the mam state with the given seed at index 0.
- mamState = MAM.init(iota, this.seed, 2, 0);
+ mamState = MAM.init(this.iota, this.seed, 2, 0);
  //mamState = MAM.changeMode(mamState, 'restricted', password)
 
+ // Save scope
+ const scope = this;
+
  // Fetch all the messages in the stream.
- fetchStartCount().then(v => {
+ fetchStartCount(scope).then(v => {
      // Log the messages.
      let startCount = v.messages.length;
 
      // To add messages at the end we need to set the startCount for the mam state to the current amount of messages.
-     mamState = MAM.init(iota, this.seed, 2, startCount);
+     mamState = MAM.init(this.iota, this.seed, 2, startCount);
      //mamState = MAM.changeMode(mamState, 'restricted', password)
-
 
  	   let newMessage = Date.now() + ' ' + JSON.stringify(json);
 
      // Now the mam state is set, we can add the message.
-     publish(newMessage);
+     publish(newMessage, scope);
  }).catch(ex => {
      console.log(ex);
  });
@@ -110,8 +111,8 @@ STREAM.prototype.initNode = function() {
 //##                  MaM                    ##
 //#############################################
 
-async function fetchStartCount(){
-    let trytes = iota.utils.toTrytes('START');
+async function fetchStartCount(scope){
+    let trytes = scope.iota.utils.toTrytes('START');
     let message = MAM.create(mamState, trytes);
     console.log('The first root:');
     console.log(message.root);
@@ -121,9 +122,9 @@ async function fetchStartCount(){
     //return await MAM.fetch(message.root, 'restricted', password, null);
 }
 
-async function publish(packet){
+async function publish(packet, scope){
     // Create the message.
-    let trytes = iota.utils.toTrytes(JSON.stringify(packet))
+    let trytes = scope.iota.utils.toTrytes(JSON.stringify(packet))
     let message = MAM.create(mamState, trytes);
     // Set the mam state so we can keep adding messages.
     mamState = message.state;
