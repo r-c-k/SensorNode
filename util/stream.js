@@ -28,8 +28,8 @@ function STREAM(_stream) {
 //##            ADD DATA SOURCE              ##
 //#############################################
 
-STREAM.prototype.addSource = function(_f) {
-  this.sources.push(_f);
+STREAM.prototype.addSource = function(_source) {
+  this.sources.push(_source);
 }
 
 //#############################################
@@ -48,7 +48,7 @@ STREAM.prototype.handle = function() {
        self.attachToTangle(data);
    }).catch(err => { console.error(err); });
   })
-  
+
 }
 
 //#############################################
@@ -117,8 +117,6 @@ STREAM.prototype.initNode = function() {
   });
 }
 
-module.exports = STREAM;
-
 //#############################################
 //##                 HELPER                  ##
 //#############################################
@@ -132,3 +130,9 @@ function generateSeed () {
 
  return seed;
 }
+
+//#############################################
+//##                   EXPORTS               ##
+//#############################################
+
+module.exports = STREAM;
