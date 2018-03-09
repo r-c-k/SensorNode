@@ -6,6 +6,7 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 let MAM = require('./mam.node.js');
 
 let mamState = null;
+let root = '';
 
 //#############################################
 //##        SENSORSTREAM CONSTRUCTOR         ##
@@ -29,15 +30,15 @@ function STREAM(_stream) {
 //##            ADD DATA SOURCE              ##
 //#############################################
 
-STREAM.prototype.addSource = function(_source) {
-  this.sources.push(_source);
+STREAM.prototype.addSource = function(_s) {
+  this.sources.push(_s);
 }
 
 //#############################################
 //##              HANDLE SOURCES             ##
 //#############################################
 
-STREAM.prototype.handle = function() {
+STREAM.prototype.handle = async function() {
 
   let self = this;
   var data = []
@@ -53,51 +54,50 @@ STREAM.prototype.handle = function() {
 }
 
 //#############################################
-//##             INITIATE MAM                ##
+//##              INITIATE MAM               ##
 //#############################################
 
 STREAM.prototype.send = function(_data) {
 
+const scope = this;
+const time = Date.now();
+
 let json = {
     'id':         this.id,
     'location':   this.location,
-    'timestamp':  Date.now() / 1000 | 0,
+    'timestamp':  time,
     'data':       _data,
  }
-
- console.log("\nJSON:");
- console.log(json);
-
- console.log('\n[sending]\n');
 
  // Initiate the mam state with the given seed at index 0.
  mamState = MAM.init(this.iota, this.seed, 2, 0);
  //mamState = MAM.changeMode(mamState, 'restricted', password)
 
- // Save scope
- const scope = this;
-
  // Fetch all the messages in the stream.
- fetchStartCount(scope).then(v => {
-     // Log the messages.
-     let startCount = v.messages.length;
+ fetchStartCount(json, scope).then(v => {
+   // Log the messages.
+   let startCount = v.messages.length;
 
-     // To add messages at the end we need to set the startCount for the mam state to the current amount of messages.
-     mamState = MAM.init(this.iota, this.seed, 2, startCount);
-     //mamState = MAM.changeMode(mamState, 'restricted', password)
+   // To add messages at the end we need to set the startCount for the mam state to the current amount of messages.
+   mamState = MAM.init(this.iota, this.seed, 2, startCount);
+   //mamState = MAM.changeMode(mamState, 'restricted', password)
 
- 	   let newMessage = Date.now() + ' ' + JSON.stringify(json);
+   let newMessage = time + ' ' + JSON.stringify(json);
 
-     // Now the mam state is set, we can add the message.
-     publish(newMessage, scope);
- }).catch(ex => {
-     console.log(ex);
+   publish(newMessage, scope).then(res => {
+    /* let hash = res[0].hash; */
+    console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
+   }).catch(err => {
+    console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
+   })
+ }).catch(err => {
+    console.log(err);
  });
 
 }
 
 //#############################################
-//##            INITIALIZE IOTA              ##
+//##            INITIALISE IOTA              ##
 //#############################################
 
 STREAM.prototype.initNode = function() {
@@ -111,14 +111,23 @@ STREAM.prototype.initNode = function() {
 //##                  MaM                    ##
 //#############################################
 
-async function fetchStartCount(scope){
+async function fetchStartCount(json, scope){
     let trytes = scope.iota.utils.toTrytes('START');
     let message = MAM.create(mamState, trytes);
-    console.log('The first root:');
-    console.log(message.root);
+
+    if (root == '') {
+      console.log('\n\x1b[45mThe first root:\x1b[0m');
+      console.log(message.root);
+      root = message.root;
+    }
+
+    console.log('\nJson:');
+    console.log(json);
     console.log();
+
     // Fetch all the messages upward from the first root.
-    return await MAM.fetch(message.root, 'public', null, null);
+    console.log('\x1b[93m[fetching]\x1b[0m');
+    return await MAM.fetch(root, 'public', null, null);
     //return await MAM.fetch(message.root, 'restricted', password, null);
 }
 
@@ -129,6 +138,7 @@ async function publish(packet, scope){
     // Set the mam state so we can keep adding messages.
     mamState = message.state;
     // Attach the message.
+    console.log('\x1b[93m[sending]\x1b[0m                       \n');
     return await MAM.attach(message.payload, message.address);
 }
 
