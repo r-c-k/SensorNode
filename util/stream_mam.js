@@ -46,7 +46,7 @@ STREAM.prototype.handle = function() {
     s().then(result => {
     data.push(result);
        if (data.length == self.sources.length)
-       self.send(data);
+       	self.send(data);
    }).catch(err => { console.error(err); });
   })
 
@@ -81,7 +81,7 @@ let json = {
    this.mamState = MAM.init(this.iota, this.seed, 2, startCount);
    //mamState = MAM.changeMode(mamState, 'restricted', password)
 
-   let newMessage = time + ' ' + JSON.stringify(json);
+   let newMessage = JSON.stringify(json);
 
    publish(newMessage, scope).then(res => {
     /* let hash = res[0].hash; */
@@ -132,12 +132,12 @@ async function fetchStartCount(json, scope){
 
 async function publish(packet, scope){
     // Create the message.
-    let trytes = scope.iota.utils.toTrytes(JSON.stringify(packet))
+    let trytes = scope.iota.utils.toTrytes(packet)
     let message = MAM.create(scope.mamState, trytes);
     // Set the mam state so we can keep adding messages.
     scope.mamState = message.state;
     // Attach the message.
-    console.log('\x1b[93m[sending]\x1b[0m                       \n');
+    console.log('\x1b[93m[sending]\x1b[0m\n');
     return await MAM.attach(message.payload, message.address);
 }
 
