@@ -132,8 +132,6 @@ async function publish(packet, scope){
     return await MAM.attach(message.payload, message.address);
 }
 
-module.exports = STREAM;
-
 //#############################################
 //##                 HELPER                  ##
 //#############################################
@@ -147,3 +145,9 @@ function generateSeed () {
 
  return seed;
 }
+
+//#############################################
+//##                   EXPORTS               ##
+//#############################################
+
+module.exports = STREAM;
