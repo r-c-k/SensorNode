@@ -37,7 +37,7 @@ STREAM.prototype.addSource = function(_s) {
 //##              HANDLE SOURCES             ##
 //#############################################
 
-STREAM.prototype.handle = async function() {
+STREAM.prototype.handle = function() {
 
   let self = this;
   var data = []
