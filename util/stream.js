@@ -33,7 +33,7 @@ STREAM.prototype.addSource = function(_f) {
 }
 
 //#############################################
-//##          HANDLE SENSORSTREAMS           ##
+//##             HANDLE SOURCES              ##
 //#############################################
 
 STREAM.prototype.handle = function() {
@@ -86,7 +86,7 @@ STREAM.prototype.attachToTangle = function(_data) {
 
      if (err) {
        console.error('FAILURE (' + err + ')');
-       return -2;
+       return -1;
      } else {
 
        /* PUSH TO TANGLE */
@@ -94,7 +94,7 @@ STREAM.prototype.attachToTangle = function(_data) {
 
            if (err) {
              console.error(err);
-             return -3;
+             return -2;
            } else {
              console.log('SUCCESS (hash: ' + result[0].hash + ')');
            }
@@ -107,7 +107,7 @@ STREAM.prototype.attachToTangle = function(_data) {
 }
 
 //#############################################
-//##            INITIALISE IOTA              ##
+//##            INITIALIZE IOTA              ##
 //#############################################
 
 STREAM.prototype.initNode = function() {
