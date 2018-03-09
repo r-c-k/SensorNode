@@ -121,7 +121,7 @@ async function fetchStartCount(json, scope){
       root = message.root;
     }
 
-    console.log('\nJson:');
+    console.log('\nJSON:');
     console.log(json);
     console.log();
 
