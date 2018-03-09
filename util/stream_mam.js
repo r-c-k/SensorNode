@@ -29,8 +29,8 @@ function STREAM(_stream) {
 //##            ADD DATA SOURCE              ##
 //#############################################
 
-STREAM.prototype.addSource = function(_f) {
-  this.sources.push(_f);
+STREAM.prototype.addSource = function(_source) {
+  this.sources.push(_source);
 }
 
 //#############################################
