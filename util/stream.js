@@ -28,8 +28,8 @@ function STREAM(_stream) {
 //##            ADD DATA SOURCE              ##
 //#############################################
 
-STREAM.prototype.addSource = function(_source) {
-  this.sources.push(_source);
+STREAM.prototype.addSource = function(_s) {
+  this.sources.push(_s);
 }
 
 //#############################################
@@ -62,7 +62,7 @@ STREAM.prototype.attachToTangle = function(_data) {
  let json = {
     'id':         this.id,
     'location':   this.location,
-    'timestamp':  Date.now() / 1000 | 0,
+    'timestamp':  Date.now(),
     'data':       _data,
  }
 
@@ -72,7 +72,7 @@ STREAM.prototype.attachToTangle = function(_data) {
  let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
  //console.log("\nTRYTES:\n" + trytes);
 
- console.log('\n[attaching]\n');
+ console.log('\n\x1b[93m[attaching]\x1b[0m\n');
 
  var transfersArray = [{
        'address': this.rec_address,
@@ -85,7 +85,7 @@ STREAM.prototype.attachToTangle = function(_data) {
    this.iota.api.prepareTransfers(this.seed, transfersArray, function(err, bundle) {
 
      if (err) {
-       console.error('FAILURE (' + err + ')');
+       console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
        return -1;
      } else {
 
@@ -93,10 +93,10 @@ STREAM.prototype.attachToTangle = function(_data) {
        self.iota.api.sendTrytes(bundle, 3, 14, function(err, result) {
 
            if (err) {
-             console.error(err);
+             console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
              return -2;
            } else {
-             console.log('SUCCESS (hash: ' + result[0].hash + ')');
+             console.log('\x1b[32mSUCCESS (hash: ' + result[0].hash + ')\x1b[0m');
            }
        })
 
