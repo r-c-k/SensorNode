@@ -42,15 +42,23 @@ stream[0].addSource(getPressure);
 //##              EXECUTION HEAD             ##
 //#############################################
 
-function run () {
-	
-  stream.forEach(function(s) {
-    s.handle();
-  })
+console.log('\n###########################');
+console.log('##    SensorNode v1.0    ##');
+console.log('###########################');
+console.log('\nTimeout: ' + (timeout = (process.argv[2] >= 60 ? process.argv[2] : 60)) + ' sec');
+/*                             depends on node performance ^^			  ^^ */
 
-  setTimeout(run, process.argv[2] || 30000);
-  /*	 depends on node performance ^^^^^ */
+console.log('Streams: ' + stream.length);
+
+function run () {
+
+ stream.forEach(function(s) {
+   s.handle();
+ })
+
+ setTimeout(run, timeout*1000);
 }
 
 /* start */
 run();
+
