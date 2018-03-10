@@ -9,7 +9,7 @@ let MAM = require('./mam.node.js');
 //##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
-function STREAM(_stream) {
+function STREAM (_stream) {
 
   this.host = _stream.host || 'localhost';
   this.port = _stream.port || 14265;
@@ -19,11 +19,13 @@ function STREAM(_stream) {
   this.sources = [];
 
   this.seed = _stream.seed || generateSeed();
-
   this.mamState = null;
-  this.fetching = _stream.fetching || false;
-  this.syncing = false;
   this.tree = null;
+
+  this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
+  this.fetch = (_stream.fetch == true ? true : false);	/* enables permanent fetching*/
+  this.ready = true;
+  this.sync = false;
 
   this.initNode();
 }
@@ -41,6 +43,10 @@ STREAM.prototype.addSource = function(_s) {
 //#############################################
 
 STREAM.prototype.handle = function() {
+
+  /* abort sending while first fetch or forced to wait */
+  if (this.sync || (this.wait && !this.ready))
+ 	 return;
 
   let self = this;
   var data = []
@@ -61,10 +67,6 @@ STREAM.prototype.handle = function() {
 
 STREAM.prototype.send = function(_data) {
 
- /* abort sending while first fetch */
- if (this.syncing == true)
- 	 return;
-
  const scope = this;
  const time = Date.now();
 
@@ -83,24 +85,24 @@ STREAM.prototype.send = function(_data) {
  fetchCount(json, scope).then(v => {
 
    /* finished fetching up */
-   this.syncing = false;
-
-   // Log the messages.
-   let count = v.messages.length;
-
-   // To add messages at the end we need to set the startCount for the mam state to the current amount of messages.
-   this.mamState = MAM.init(this.iota, this.seed, 2, count);
-   //mamState = MAM.changeMode(mamState, 'restricted', password)
+   this.sync = false;
+	 
+   this.mamState = MAM.init(this.iota, this.seed, 2, v.messages.length);
+   /* mamState = MAM.changeMode(mamState, 'restricted', password) */
 
    let newMessage = JSON.stringify(json);
 
    publish(newMessage, scope).then(res => {
 	   
-   	console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
+     console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
+
+     /* unlock for next message */
+     /* if (scope.wait) */
+	  scope.ready = true;
 	   
-   }).catch(err => { console.log('\x1b[41mERROR\x1b[0m (' + err + ')'); })
+   }).catch(err => { console.error('\x1b[41mERROR\x1b[0m (' + err + ')'); })
 	 
- }).catch(err => { console.log(err); });
+ }).catch(err => { console.error('\x1b[41mERROR\x1b[0m (' + err + ')'); });
 
 }
 
@@ -119,7 +121,12 @@ STREAM.prototype.initNode = function() {
 //##                  MaM                    ##
 //#############################################
 
-async function fetchCount(_json, _scope){
+async function fetchCount (_json, _scope) {
+
+/* lock until message is send */
+/* if (scope.wait) */
+    _scope.ready = false;
+
     let trytes = _scope.iota.utils.toTrytes('START');
     let message = MAM.create(_scope.mamState, trytes);
 
@@ -127,7 +134,7 @@ async function fetchCount(_json, _scope){
 
       console.log('\n\x1b[45mThe first root:\x1b[0m');
       console.log(message.root);
-      _scope.syncing = true;
+      _scope.sync = true;
 
     } else { ++_scope.tree.messages.length; }
 
@@ -135,18 +142,17 @@ async function fetchCount(_json, _scope){
     console.log(_json);
     console.log();
 
-    if (_scope.fetching || _scope.tree == null) {
+    if (_scope.fetch || _scope.tree == null) {
 	 // Fetch all the messages upward from the first root.
 	 console.log('\x1b[93m[fetching]\x1b[0m');
 	 _scope.tree = await MAM.fetch(message.root, 'public', null, null);
-	 //_scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
+	 /* _scope.tree = await MAM.fetch(message.root, 'restricted', password, null); */
     }
 
     return _scope.tree;
 }
 
-async function publish(_packet, _scope){
-    // Create the message.
+async function publish (_packet, _scope) {
     let trytes = _scope.iota.utils.toTrytes(_packet)
     let message = MAM.create(_scope.mamState, trytes);
     // Set the mam state so we can keep adding messages.
