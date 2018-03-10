@@ -19,7 +19,7 @@ function STREAM(_stream) {
 
   this.seed = _stream.seed || generateSeed();
   this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
-  this.tag = _stream.tag || 'MYSENSORSTREAM';
+  this.tag = _stream.tag || 'SensorNode';
 
   this.depth = _stream.depth || 3;
 
