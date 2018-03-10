@@ -5,7 +5,7 @@
 let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 
 //#############################################
-//##        SENSORSTREAM CONSTRUCTOR         ##
+//##            STREAM CONSTRUCTOR           ##
 //#############################################
 
 function STREAM(_stream) {
@@ -13,7 +13,7 @@ function STREAM(_stream) {
   this.host = _stream.host || 'localhost';
   this.port = _stream.port || 14265;
 
-  this.id = _stream.id || 'raspNode';
+  this.id = _stream.id || 'MyNode';
   this.location = _stream.location || '';
   this.sources = [];
 
