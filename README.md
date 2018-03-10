@@ -18,6 +18,7 @@ seed | Seed for creating transactions/MAM-messages. | [generated]
 rec | Receiving address (tanglestream only). | "GPB9PBNCJTPGF..."
 tag | Tag for Transactions (tanglestream only). | "SensorStream"
 depth | Depth for tip-selection (tanglestream only). | 3
+wait | Discards packets till the current packet has been send (mamstream only). | true
 fetching | Enable continuous fetching from MAM-root when multiple nodes stream from the same seed (mamstream only).| false
 
 #### First Stream:
