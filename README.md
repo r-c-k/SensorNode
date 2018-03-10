@@ -5,6 +5,19 @@ Either data is being pushed to <a href="https://thetangle.org/">Tangle</a> or se
 
 ### Creating streams:
 
+You can create streamobjects with the following parameters:
+
+###### Parameters:
+Parameter | Function | Default
+------------ | ------------- | -------------
+host | (Remote-) node, we're connecting to. | localhost
+port | Iota-api port on the node | 14265
+id | Identifies the streamobject | "MyNode"
+location | Nodes location, eg. "Home" or "52.26°N 13.42°E" | "Home"
+seed | Seed for creating transactions/MAM-messages | [generated]
+rec | Receiving address (tanglestream only) | "GPB9PBNCJTPGF..."
+tag | Tag for Transactions (tanglestream only) | "TANGLESTREAM"
+
 #### First Stream:
 ```
 stream.push(new STREAM ({
@@ -25,18 +38,28 @@ stream.push(new STREAM ({
   [OPTIONAL PARAMETERS]
   
 }))
+
 ```
 
 #### Add data sources
-```
-stream[0].addSource(functionX);
-stream[0].addSource(functionY);
-stream[0].addSource(functionZ);
 
-stream[1].addSource(functionFoo);
-stream[1].addSource(functionBar);
+Data sources are (async) functions which return the data you want to stream,
+eg:
+
+```
+async function functionFoo () {
+	return await sensor.read();
+}
+```
+```
+stream[0].addSource(functionFoo);
+stream[0].addSource(functionBar);
+
+stream[1].addSource(functionX);
+stream[1].addSource(functionY);
+stream[1].addSource(functionZ);
 ```
 
 ## Cool! Whats next?
 
-Thats it. Have fun providing your sensor data over the iota protocol. ;)
+Thats it. Have fun providing data over the iota protocol. ;)
