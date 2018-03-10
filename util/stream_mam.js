@@ -6,7 +6,7 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 let MAM = require('./mam.node.js');
 
 //#############################################
-//##        SENSORSTREAM CONSTRUCTOR         ##
+//##            STREAM CONSTRUCTOR           ##
 //#############################################
 
 function STREAM(_stream) {
