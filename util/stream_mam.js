@@ -123,10 +123,10 @@ STREAM.prototype.initNode = function() {
 
 async function fetchCount (_json, _scope) {
 
-/* lock until message is send */
-/* if (scope.wait) */
-    _scope.ready = false;
-
+   /* lock until message is send */
+   /* if (scope.wait) */
+    	_scope.ready = false;
+	
     let trytes = _scope.iota.utils.toTrytes('START');
     let message = MAM.create(_scope.mamState, trytes);
 
