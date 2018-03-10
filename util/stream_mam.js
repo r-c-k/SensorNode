@@ -14,8 +14,8 @@ function STREAM(_stream) {
   this.host = _stream.host || 'localhost';
   this.port = _stream.port || 14265;
 
-  this.id = _stream.id || 'raspNode';
-  this.location = _stream.location || '';
+  this.id = _stream.id || 'MyNode';
+  this.location = _stream.location || 'Home';
   this.sources = [];
 
   this.seed = _stream.seed || generateSeed();
