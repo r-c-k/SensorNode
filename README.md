@@ -10,7 +10,7 @@ You can create streamobjects with the following parameters:
 ###### Parameters:
 Parameter | Function | Default
 ------------ | ------------- | -------------
-host | (Remote-) node, we're connecting to. | localhost
+host | (Remote-) node we're connecting to. | localhost
 port | Iota-api port on the node | 14265
 id | Identifies the streamobject | "MyNode"
 location | Nodes location, eg. "Home" or "52.26°N 13.42°E" | "Home"
