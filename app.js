@@ -32,6 +32,7 @@ stream.push(new STREAM ({
   'id':   'RaspBerry',
   'location':  '52.26°N 13.42°E',
   'tag':  'SENSORSTREAM999ONE', /* for tangle-stream */
+  'depth': 3
 }))
 
 stream[0].addSource(getHumidity);
