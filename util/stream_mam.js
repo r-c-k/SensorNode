@@ -14,13 +14,16 @@ function STREAM(_stream) {
   this.host = _stream.host || 'localhost';
   this.port = _stream.port || 14265;
 
-  this.id = _stream.id || 'MyNode';
+  this.id = _stream.id || 'raspNode';
   this.location = _stream.location || '';
   this.sources = [];
 
+  this.seed = _stream.seed || generateSeed();
+
   this.root = '';
   this.mamState = null;
-  this.seed = _stream.seed || generateSeed();
+  this.fetching = _stream.fetching || false;
+  this.tree = null;
 
   this.initNode();
 }
@@ -73,12 +76,12 @@ let json = {
  //mamState = MAM.changeMode(mamState, 'restricted', password)
 
  // Fetch all the messages in the stream.
- fetchStartCount(json, scope).then(v => {
+ fetchCount(json, scope).then(v => {
    // Log the messages.
-   let startCount = v.messages.length;
+   let count = v.messages.length;
 
    // To add messages at the end we need to set the startCount for the mam state to the current amount of messages.
-   this.mamState = MAM.init(this.iota, this.seed, 2, startCount);
+   this.mamState = MAM.init(this.iota, this.seed, 2, count);
    //mamState = MAM.changeMode(mamState, 'restricted', password)
 
    let newMessage = JSON.stringify(json);
@@ -110,7 +113,7 @@ STREAM.prototype.initNode = function() {
 //##                  MaM                    ##
 //#############################################
 
-async function fetchStartCount(json, scope){
+async function fetchCount(json, scope){
     let trytes = scope.iota.utils.toTrytes('START');
     let message = MAM.create(scope.mamState, trytes);
 
@@ -123,11 +126,15 @@ async function fetchStartCount(json, scope){
     console.log('\nJSON:');
     console.log(json);
     console.log();
+  
+	if (scope.fetching || scope.tree == null) {
+		// Fetch all the messages upward from the first root.
+    	console.log('\x1b[93m[fetching]\x1b[0m');
+		scope.tree = await MAM.fetch(scope.root, 'public', null, null);
+		//scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
+	} else { ++scope.tree.messages.length; }
 
-    // Fetch all the messages upward from the first root.
-    console.log('\x1b[93m[fetching]\x1b[0m');
-    return await MAM.fetch(scope.root, 'public', null, null);
-    //return await MAM.fetch(message.root, 'restricted', password, null);
+    return scope.tree;
 }
 
 async function publish(packet, scope){
