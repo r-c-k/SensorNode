@@ -1,7 +1,8 @@
 const STREAM = require('./util/stream');
 //const STREAM = require('./util/stream_mam');
 
-/* holds our STREAM objects */
+var timeout = (process.argv[2] >= 0 ? process.argv[2] : 60);
+			 /* depends on node performance ^^ */
 var stream = [];
 
 //#############################################
@@ -46,9 +47,8 @@ stream[0].addSource(getPressure);
 console.log('\n###########################');
 console.log('##    SensorNode v1.0    ##');
 console.log('###########################');
-console.log('\nTimeout: ' + (timeout = (process.argv[2] >= 60 ? process.argv[2] : 60)) + ' sec');
-/*                             depends on node performance ^^			  ^^ */
 
+console.log('\nTimeout: ' + timeout + ' sec');
 console.log('Streams: ' + stream.length);
 
 function run () {
