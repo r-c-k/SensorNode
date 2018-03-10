@@ -11,15 +11,15 @@ var stream = [];
 /* pseudo functions */
 
 async function getHumidity () {
-	return await 37.2 + ' %RH';
+	return await {'humidity %RH' : 37.2};
 }
 
 async function getTemperature () {
-	return await 22.0 + ' °C';
+	return await {'temperature °C' : 22.0};
 }
 
 async function getPressure () {
-	return await 933.0 + ' hPa';
+	return await {'pressure hPa' : 933};
 }
 
 //#############################################
