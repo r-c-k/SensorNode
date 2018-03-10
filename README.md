@@ -17,7 +17,7 @@ location | Nodes location, eg. "Home" or "52.26°N 13.42°E". | "Home"
 seed | Seed for creating transactions/MAM-messages. | [generated]
 rec | Receiving address (tanglestream only). | "GPB9PBNCJTPGF..."
 tag | Tag for Transactions (tanglestream only). | "SensorStream"
-depth | Depth for tip-selection | 3
+depth | Depth for tip-selection (tanglestream only). | 3
 fetching | Enable continuous fetching from MAM-root when multiple nodes stream from the same seed (mamstream only).| false
 
 #### First Stream:
