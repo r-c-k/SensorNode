@@ -6,7 +6,7 @@ let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 let MAM = require('./mam.node.js');
 
 //#############################################
-//##            STREAM CONSTRUCTOR           ##
+//##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
 function STREAM(_stream) {
@@ -20,9 +20,9 @@ function STREAM(_stream) {
 
   this.seed = _stream.seed || generateSeed();
 
-  this.root = '';
   this.mamState = null;
   this.fetching = _stream.fetching || false;
+  this.syncing = false;
   this.tree = null;
 
   this.initNode();
@@ -61,15 +61,19 @@ STREAM.prototype.handle = function() {
 
 STREAM.prototype.send = function(_data) {
 
-const scope = this;
-const time = Date.now();
+ /* abort sending while first fetch */
+ if (this.syncing == true)
+ 	 return;
 
-let json = {
-    'id':         this.id,
-    'location':   this.location,
-    'timestamp':  time,
-    'data':       _data,
- }
+ const scope = this;
+ const time = Date.now();
+
+ let json = {
+	'id':         this.id,
+	'location':   this.location,
+	'timestamp':  time,
+	'data':       _data,
+  }
 
  // Initiate the mam state with the given seed at index 0.
  this.mamState = MAM.init(this.iota, this.seed, 2, 0);
@@ -77,6 +81,10 @@ let json = {
 
  // Fetch all the messages in the stream.
  fetchCount(json, scope).then(v => {
+
+   /* finished fetching up */
+   this.syncing = false;
+
    // Log the messages.
    let count = v.messages.length;
 
@@ -87,14 +95,12 @@ let json = {
    let newMessage = JSON.stringify(json);
 
    publish(newMessage, scope).then(res => {
-    /* let hash = res[0].hash; */
-    console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
-   }).catch(err => {
-    console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
-   })
- }).catch(err => {
-    console.log(err);
- });
+	   
+   	console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
+	   
+   }).catch(err => { console.log('\x1b[41mERROR\x1b[0m (' + err + ')'); })
+	 
+ }).catch(err => { console.log(err); });
 
 }
 
@@ -113,36 +119,38 @@ STREAM.prototype.initNode = function() {
 //##                  MaM                    ##
 //#############################################
 
-async function fetchCount(json, scope){
-    let trytes = scope.iota.utils.toTrytes('START');
-    let message = MAM.create(scope.mamState, trytes);
+async function fetchCount(_json, _scope){
+    let trytes = _scope.iota.utils.toTrytes('START');
+    let message = MAM.create(_scope.mamState, trytes);
 
-    if (scope.root == '') {
+    if (_scope.tree == null) {
+
       console.log('\n\x1b[45mThe first root:\x1b[0m');
       console.log(message.root);
-      scope.root = message.root;
-    }
+      _scope.syncing = true;
+
+    } else { ++_scope.tree.messages.length; }
 
     console.log('\nJSON:');
-    console.log(json);
+    console.log(_json);
     console.log();
-  	
-    if (scope.fetching || scope.tree == null) {
-	// Fetch all the messages upward from the first root.
-    	console.log('\x1b[93m[fetching]\x1b[0m');
-	scope.tree = await MAM.fetch(scope.root, 'public', null, null);
-	//scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
-    } else { ++scope.tree.messages.length; }
 
-    return scope.tree;
+    if (_scope.fetching || _scope.tree == null) {
+	 // Fetch all the messages upward from the first root.
+	 console.log('\x1b[93m[fetching]\x1b[0m');
+	 _scope.tree = await MAM.fetch(message.root, 'public', null, null);
+	 //_scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
+    }
+
+    return _scope.tree;
 }
 
-async function publish(packet, scope){
+async function publish(_packet, _scope){
     // Create the message.
-    let trytes = scope.iota.utils.toTrytes(packet)
-    let message = MAM.create(scope.mamState, trytes);
+    let trytes = _scope.iota.utils.toTrytes(_packet)
+    let message = MAM.create(_scope.mamState, trytes);
     // Set the mam state so we can keep adding messages.
-    scope.mamState = message.state;
+    _scope.mamState = message.state;
     // Attach the message.
     console.log('\x1b[93m[sending]\x1b[0m\n');
     return await MAM.attach(message.payload, message.address);
