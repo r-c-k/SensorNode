@@ -65,4 +65,6 @@ stream[1].addSource(functionZ);
 
 ## Cool! Whats next?
 
+Run with ``` npm app [timeout] ```
+
 Thats it. Have fun providing data over the iota protocol. ;)
