@@ -5,7 +5,7 @@
 let IOTA = require('../node_modules/iota.lib.js/lib/iota');
 
 //#############################################
-//##            STREAM CONSTRUCTOR           ##
+//##        SENSORSTREAM CONSTRUCTOR         ##
 //#############################################
 
 function STREAM(_stream) {
@@ -14,12 +14,14 @@ function STREAM(_stream) {
   this.port = _stream.port || 14265;
 
   this.id = _stream.id || 'MyNode';
-  this.location = _stream.location || '';
+  this.location = _stream.location || 'Home';
   this.sources = [];
 
   this.seed = _stream.seed || generateSeed();
   this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
-  this.tag  = _stream.tag || 'MYSENSORSTREAM';
+  this.tag = _stream.tag || 'MYSENSORSTREAM';
+
+  this.depth = _stream.depth || 3;
 
   this.initNode();
 }
@@ -57,7 +59,7 @@ STREAM.prototype.handle = function() {
 
 STREAM.prototype.attachToTangle = function(_data) {
 
- let self = this;
+ const scope = this;
 
  let json = {
     'id':         this.id,
@@ -90,7 +92,7 @@ STREAM.prototype.attachToTangle = function(_data) {
      } else {
 
        /* PUSH TO TANGLE */
-       self.iota.api.sendTrytes(bundle, 3, 14, function(err, result) {
+       scope.iota.api.sendTrytes(bundle, scope.depth, 14, function(err, result) {
 
            if (err) {
              console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
