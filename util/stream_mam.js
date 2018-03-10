@@ -126,13 +126,13 @@ async function fetchCount(json, scope){
     console.log('\nJSON:');
     console.log(json);
     console.log();
-  
-	if (scope.fetching || scope.tree == null) {
-		// Fetch all the messages upward from the first root.
+  	
+    if (scope.fetching || scope.tree == null) {
+	// Fetch all the messages upward from the first root.
     	console.log('\x1b[93m[fetching]\x1b[0m');
-		scope.tree = await MAM.fetch(scope.root, 'public', null, null);
-		//scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
-	} else { ++scope.tree.messages.length; }
+	scope.tree = await MAM.fetch(scope.root, 'public', null, null);
+	//scope.tree = await MAM.fetch(message.root, 'restricted', password, null);
+    } else { ++scope.tree.messages.length; }
 
     return scope.tree;
 }
