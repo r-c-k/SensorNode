@@ -19,7 +19,6 @@ function STREAM (_stream) {
   this.sources = [];
 
   this.seed = _stream.seed || generateSeed();
-  this.mamState = null;
   this.tree = null;
 
   this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
@@ -28,6 +27,10 @@ function STREAM (_stream) {
   this.sync = false;
 
   this.initNode();
+	
+  // Initiate the mam state with the given seed at index 0.
+  this.mamState = MAM.init(this.iota, this.seed, 2, 0);
+  /* mamState = MAM.changeMode(mamState, 'restricted', password) */
 }
 
 //#############################################
@@ -76,10 +79,6 @@ STREAM.prototype.send = function(_data) {
 	'timestamp':  time,
 	'data':       _data,
   }
-
- // Initiate the mam state with the given seed at index 0.
- this.mamState = MAM.init(this.iota, this.seed, 2, 0);
- //mamState = MAM.changeMode(mamState, 'restricted', password)
 
  // Fetch all the messages in the stream.
  fetchCount(json, scope).then(v => {
