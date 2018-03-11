@@ -23,11 +23,11 @@ function STREAM (_stream) {
 
   this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
   this.fetch = (_stream.fetch == true ? true : false);	/* enables permanent fetching*/
-  this.ready = true;
+  this.busy = false;
   this.sync = false;
 
   this.initNode();
-	
+
   // Initiate the mam state with the given seed at index 0.
   this.mamState = MAM.init(this.iota, this.seed, 2, 0);
   /* mamState = MAM.changeMode(mamState, 'restricted', password) */
@@ -47,9 +47,12 @@ STREAM.prototype.addSource = function(_s) {
 
 STREAM.prototype.handle = function() {
 
-  /* abort sending while first fetch or forced to wait */
-  if (this.sync || (this.wait && !this.ready))
- 	 return;
+  /* abort sending while first fetch or lock until message is send */
+  if (this.sync || (this.wait && this.busy))
+ 	 return null;
+
+  /* if (scope.wait) */
+    this.busy = true;
 
   let self = this;
   var data = []
@@ -95,9 +98,8 @@ STREAM.prototype.send = function(_data) {
 	   
      console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
 
-     /* unlock for next message */
      /* if (scope.wait) */
-	  scope.ready = true;
+	  scope.busy = false;
 	   
    }).catch(err => { console.error('\x1b[41mERROR\x1b[0m (' + err + ')'); })
 	 
@@ -122,10 +124,6 @@ STREAM.prototype.initNode = function() {
 
 async function fetchCount (_json, _scope) {
 
-   /* lock until message is send */
-   /* if (scope.wait) */
-    	_scope.ready = false;
-	
     let trytes = _scope.iota.utils.toTrytes('START');
     let message = MAM.create(_scope.mamState, trytes);
 
