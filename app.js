@@ -36,17 +36,30 @@ stream.push(new STREAM ({
   'depth': 3 /* tanglestream */
 }))
 
+/*
+
+stream.push(new MAM_STREAM ({
+  'host': 'http://localhost',
+  'port':  14265,
+  'id':   'SensorNode2',
+  'location':  '22.14°N 51.23°E',
+}))
+
+*/
+
 stream[0].addSource(getHumidity);
 stream[0].addSource(getTemperature);
 stream[0].addSource(getPressure);
+
+// stream[1].addSource(getTemperature);
 
 //#############################################
 //##              EXECUTION HEAD             ##
 //#############################################
 
-console.log('\n###########################');
-console.log('##    SensorNode v1.0    ##');
-console.log('###########################');
+console.log('\n╔════════════════════════════╗');
+console.log('║       SensorNode v1.1      ║');
+console.log('╚════════════════════════════╝');
 
 console.log('\nTimeout: ' + timeout + ' sec');
 console.log('Streams: ' + stream.length);

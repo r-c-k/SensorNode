@@ -75,6 +75,7 @@ STREAM.prototype.send = function(_data) {
 
  const scope = this;
  const time = Date.now();
+ const ts = '\x1b[95m' + time + '\x1b[0m ';
 
  let json = {
 	'id':         this.id,
@@ -94,16 +95,16 @@ STREAM.prototype.send = function(_data) {
 
    let newMessage = JSON.stringify(json);
 
-   publish(newMessage, scope).then(res => {
+   publish(newMessage, scope).then(result => {
 
-     console.log('\x1b[32mMESSAGE (@ ' + time + ') SENT\x1b[0m');
+     console.log(ts + '\x1b[32mSENT (hash: ' + result[0].hash + ')\x1b[0m');
 
      /* if (scope.wait) */
 	  scope.busy = false;
 
-   }).catch(err => { console.error('\x1b[41mERROR\x1b[0m (' + err + ')'); })
+   }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); })
 
- }).catch(err => { console.error('\x1b[41mERROR\x1b[0m (' + err + ')'); });
+ }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); });
 
 }
 
@@ -135,7 +136,7 @@ async function fetchCount (_json, _scope) {
 
     } else { ++_scope.tree.messages.length; }
 
-    console.log('\nJSON:');
+    console.log('\nJSON (\x1b[95mMaM\x1b[0m):');
     console.log(_json);
     console.log();
 

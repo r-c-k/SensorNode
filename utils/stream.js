@@ -70,15 +70,17 @@ STREAM.prototype.handle = function() {
 STREAM.prototype.attachToTangle = function(_data) {
 
  const scope = this;
+ const time = Date.now();
+ const ts = '\x1b[94m' + time + '\x1b[0m ';
 
  let json = {
     'id':         this.id,
     'location':   this.location,
-    'timestamp':  Date.now(),
+    'timestamp':  time,
     'data':       _data,
  }
 
- console.log("\nJSON:");
+ console.log('\nJSON (\x1b[94mTangle\x1b[0m):')
  console.log(json);
 
  let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
@@ -97,7 +99,7 @@ STREAM.prototype.attachToTangle = function(_data) {
    this.iota.api.prepareTransfers(this.seed, transfersArray, function(err, bundle) {
 
      if (err) {
-       console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
+       console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
        return -1;
      } else {
 
@@ -105,10 +107,10 @@ STREAM.prototype.attachToTangle = function(_data) {
        scope.iota.api.sendTrytes(bundle, scope.depth, 14, function(err, result) {
 
            if (err) {
-             console.log('\x1b[41mERROR\x1b[0m (' + err + ')');
+             console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
              return -2;
            } else {
-             console.log('\x1b[32mSUCCESS (hash: ' + result[0].hash + ')\x1b[0m');
+             console.log(ts + '\x1b[32mATTACHED (hash: ' + result[0].hash + ')\x1b[0m');
              /* if (scope.wait) */
         	    scope.busy = false;
            }
