@@ -12,13 +12,13 @@ Parameter | Function | Default
 ------------ | ------------- | -------------
 host | (Remote-) node we're connecting to. | localhost
 port | Iota-api port on the node. | 14265
-id | Identifies the streamobject. | "MyNode"
+id | Identifies the streamobject. | "SensorNode"
 location | Nodes location, eg. "Home" or "52.26°N 13.42°E". | "Home"
 seed | Seed for creating transactions/MAM-messages. | [generated]
 rec | Receiving address (tanglestream only). | "GPB9PBNCJTPGF..."
 tag | Tag for Transactions (tanglestream only). | "SENSORNODEROCKS"
 depth | Depth for tip-selection (tanglestream only). | 3
-wait | Discards packets till the current packet has been send (mamstream only). | true
+wait | Discards packets till the current packet has been send. | true
 fetch | Enable continuous fetching from MAM-root when multiple nodes stream from the same seed (mamstream only).| false
 
 #### First Stream:
@@ -26,9 +26,9 @@ fetch | Enable continuous fetching from MAM-root when multiple nodes stream from
 stream.push(new STREAM ({
   'host': 'http://[remote node / localhost]',
   'port':  [port]
-  
+
   [OPTIONAL PARAMETERS]
-  
+
 }))
 ```
 
@@ -37,9 +37,9 @@ stream.push(new STREAM ({
 stream.push(new STREAM ({
   'host': 'http://[remote node / localhost]',
   'port':  [port]
-  
+
   [OPTIONAL PARAMETERS]
-  
+
 }))
 
 ```

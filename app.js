@@ -1,15 +1,15 @@
-const STREAM = require('./util/stream');
-//const STREAM = require('./util/stream_mam');
+const STREAM = require('./utils/stream');
+const MAM_STREAM = require('./utils/stream_mam');
 
 const timeout = (process.argv[2] >= 0 ? process.argv[2] : 60);
-			 /* depends on node performance ^^ */
+			 										 /* depends on node performance ^^ */
 var stream = [];
 
 //#############################################
 //##	      	  SETUP SENSORS	 	     ##
 //#############################################
 
-/* pseudo functions */
+/* example functions */
 
 async function getHumidity () {
 	return await {'humidity' : '37.2 %RH'};
@@ -28,11 +28,11 @@ async function getPressure () {
 //#############################################
 
 stream.push(new STREAM ({
-  'host': 'http://0.0.0.0',
+  'host': 'http://localhost',
   'port':  14265,
-  'id':   'RaspBerry',
+  'id':   'SensorNode',
   'location':  '52.26°N 13.42°E',
-  'tag':  'SENSORSTREAM999ONE', /* tanglestream */
+  'tag':  'SENSORNODEROCKS', /* tanglestream */
   'depth': 3 /* tanglestream */
 }))
 
@@ -62,4 +62,3 @@ function run () {
 
 /* start */
 run();
-
