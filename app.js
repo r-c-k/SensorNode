@@ -1,7 +1,7 @@
 const STREAM = require('./util/stream');
 //const STREAM = require('./util/stream_mam');
 
-var timeout = (process.argv[2] >= 0 ? process.argv[2] : 60);
+const timeout = (process.argv[2] >= 0 ? process.argv[2] : 60);
 			 /* depends on node performance ^^ */
 var stream = [];
 
