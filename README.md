@@ -21,7 +21,7 @@ depth | Depth for tip-selection (tanglestream only). | 3
 wait | Discards packets till the current packet has been send. | true
 fetch | Enable continuous fetching from MAM-root when multiple nodes stream from the same seed (mamstream only).| false
 
-#### First Stream:
+#### First Stream (TANGLE):
 ```
 stream.push(new STREAM ({
   'host': 'http://[remote node / localhost]',
@@ -32,9 +32,9 @@ stream.push(new STREAM ({
 }))
 ```
 
-#### Second Stream:
+#### Second Stream (MAM):
 ```
-stream.push(new STREAM ({
+stream.push(new MAM_STREAM ({
   'host': 'http://[remote node / localhost]',
   'port':  [port]
 
