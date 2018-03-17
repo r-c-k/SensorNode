@@ -9,49 +9,51 @@ var stream = [];
 //##	      	  SETUP SENSORS	 	     ##
 //#############################################
 
-/* example functions */
+/* example function */
 
-async function getHumidity () {
-	return await {'humidity' : '37.2 %RH'};
-}
+async function readSensor () {
 
-async function getTemperature () {
-	return await {'temperature' : '22.0 °C'};
-}
+	let h = (Math.random() * (50.0 - 30.0) + 30.0).toFixed(2) + ' %RH';
+	let t = (Math.random() * (30.0 - 20.0) + 20.0).toFixed(2) + ' °C';
+	let p = (Math.random() * (1000.0 - 900.0) + 900.0).toFixed(2) + ' hPa';
+	let g = (Math.random() * (35000.0 - 25000.0) + 25000.0).toFixed(2) + ' Ohms';
 
-async function getPressure () {
-	return await {'pressure' : '933 hPa'};
+	let json = {
+		'humidity': h,
+		'temperature': t,
+		'pressure': p,
+		'gasResistance': g
+	}
+
+	return await json;
 }
 
 //#############################################
 //##              SETUP STREAMS              ##
 //#############################################
 
-stream.push(new STREAM ({
-  'host': 'http://localhost',
-  'port':  14265,
-  'id':   'SensorNode',
-  'location':  '52.26°N 13.42°E',
-  'tag':  'SENSORNODEROCKS', /* tanglestream */
-  'depth': 3 /* tanglestream */
-}))
-
-/*
-
+/* MAMSTREAM */
 stream.push(new MAM_STREAM ({
   'host': 'http://localhost',
   'port':  14265,
-  'id':   'SensorNode2',
-  'location':  '22.14°N 51.23°E',
+  'id':   'SensorNode1',
+  'location':  'Home',
 }))
 
+/* TANGLESTREAM */
+/*
+stream.push(new STREAM ({
+  'host': 'http://localhost',
+  'port':  14265,
+  'id':   'SensorNode2',
+  'location':  '52.26°N 13.42°E',
+  'tag':  'SENSORNODEROCKS',
+  'depth': 3
+}))
 */
 
-stream[0].addSource(getHumidity);
-stream[0].addSource(getTemperature);
-stream[0].addSource(getPressure);
-
-// stream[1].addSource(getTemperature);
+stream[0].addSource(readSensor);
+// stream[1].addSource(readSensor);
 
 //#############################################
 //##              EXECUTION HEAD             ##
