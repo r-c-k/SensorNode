@@ -73,3 +73,7 @@ stream[1].addSource(functionZ);
 Run with ``` node app [delay] ``` where delay specifies a timeout between each push (default 60 seconds).
 
 Thats it. Have fun providing data over the iota protocol. ;)
+
+## You want to DONATE?
+
+IOTA: VDBFANNKXHJU9EUJESQAANDFIGRNXYIQ9IJWZZO9AOHCQYBDXVRUBNLFATXDW9IMTSKBWESBAKDMMO9NX
