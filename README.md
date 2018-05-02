@@ -3,7 +3,10 @@ SensorNode-client application for [IOTA](http://iota.org).
 
 Either data is being pushed to [Tangle](https://thetangle.org/) or send as [Masked Authenticated Message](https://blog.iota.org/introducing-masked-authenticated-messaging-e55c1822d50e) (or both).
 
-<img src="https://i.imgur.com/M86itA7.png"/>
+<img src="https://i.imgur.com/CUu49Y3.jpg"/>
+
+(*Image by [Wyn Tiedmers](https://www.wynt.de/)*)
+
 
 ### Creating streams:
 
