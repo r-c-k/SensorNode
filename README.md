@@ -74,6 +74,6 @@ Run with ``` node app [delay] ``` where delay specifies a timeout between each p
 
 Thats it. Have fun providing data over the iota protocol. ;)
 
-## You want to DONATE?
+## You want to donate?
 
 IOTA: VDBFANNKXHJU9EUJESQAANDFIGRNXYIQ9IJWZZO9AOHCQYBDXVRUBNLFATXDW9IMTSKBWESBAKDMMO9NX
