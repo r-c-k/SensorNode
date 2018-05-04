@@ -16,7 +16,7 @@ class MAM_STREAM {
     this.host = _stream.host || '0.0.0.0';
     this.port = _stream.port || 14265;
 
-    this.id = _stream.id || 'SensorNode (MAM)';
+    this.id = _stream.id || 'SensorNode';
     this.location = _stream.location || 'Home';
     this.sources = [];
 
