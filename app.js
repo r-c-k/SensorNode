@@ -3,7 +3,7 @@ const MAM_STREAM = require('./utils/stream_mam');
 
 const timeout = (process.argv[2] >= 0 ? process.argv[2] : 60);
                            /* depends on node performance ^^ */
-var stream = [];
+var streams = [];
 
 //#############################################
 //##	      	  SETUP SENSORS	 	     ##
@@ -33,43 +33,43 @@ async function readSensor () {
 //#############################################
 
 /* MAMSTREAM */
-stream.push(new MAM_STREAM ({
-  'host': 'http://localhost',
+streams.push(new MAM_STREAM ({
+  'host': 'http://0.0.0.0',
   'port':  14265,
-  'id':   'SensorNode1',
+  'id':   'SensorNode (MAM)',
   'location':  'Home',
 }))
 
 /* TANGLESTREAM */
 /*
-stream.push(new STREAM ({
-  'host': 'http://localhost',
+streams.push(new STREAM ({
+  'host': 'http://0.0.0.0',
   'port':  14265,
-  'id':   'SensorNode2',
+  'id':   'SensorNode',
   'location':  '52.26°N 13.42°E',
   'tag':  'SENSORNODEROCKS',
   'depth': 3
 }))
 */
 
-stream[0].addSource(readSensor);
-// stream[1].addSource(readSensor);
+streams[0].addSource(readSensor);
+// streams[1].addSource(readSensor);
 
 //#############################################
 //##              EXECUTION HEAD             ##
 //#############################################
 
 console.log('\n╔════════════════════════════╗');
-console.log('║       SensorNode v1.1      ║');
+console.log('║       SensorNode v1.2      ║');
 console.log('╚════════════════════════════╝');
-
-console.log('\nTimeout: ' + timeout + ' sec');
-console.log('Streams: ' + stream.length);
+console.log();
+console.log('Timeout: ' + timeout + ' sec');
+console.log('Streams: ' + streams.length);
 
 function run () {
 
- stream.forEach(function(s) {
-   s.handle();
+ streams.forEach(stream => {
+   stream.handle();
  })
 
  setTimeout(run, timeout*1000);

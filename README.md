@@ -15,10 +15,10 @@ You can create streamobjects with the following parameters:
 ###### Parameters:
 Parameter | Function | Default
 ------------ | ------------- | -------------
-host | (Remote-) node we're connecting to. | localhost
+host | (Remote-) node we're connecting to. | 0.0.0.0
 port | Iota-api port on the node. | 14265
-id | Identifies the streamobject. | "SensorNode"
-location | Nodes location, eg. "Home" or "52.26°N 13.42°E". | "Home"
+id | Identifies the streamobject. | "SensorNode / SensorNode (MAM)"
+location | Nodes location, eg. "Home" or "52.26°N 13.42°E" [...]. | "Home"
 seed | Seed for creating transactions/MAM-messages. | [generated]
 rec | Receiving address (tanglestream only). | "GPB9PBNCJTPGF..."
 tag | Tag for Transactions (tanglestream only). | "SENSORNODEROCKS"
@@ -28,7 +28,7 @@ fetch | Enable continuous fetching from MAM-root when multiple nodes stream from
 
 #### First Stream (TANGLE):
 ```
-stream.push(new STREAM ({
+streams.push(new STREAM ({
   'host': 'http://[remote node / localhost]',
   'port':  [port]
 
@@ -39,7 +39,7 @@ stream.push(new STREAM ({
 
 #### Second Stream (MAM):
 ```
-stream.push(new MAM_STREAM ({
+streams.push(new MAM_STREAM ({
   'host': 'http://[remote node / localhost]',
   'port':  [port]
 
@@ -60,12 +60,12 @@ async function functionFoo () {
 }
 ```
 ```
-stream[0].addSource(functionFoo);
-stream[0].addSource(functionBar);
+streams[0].addSource(functionFoo);
+streams[0].addSource(functionBar);
 
-stream[1].addSource(functionX);
-stream[1].addSource(functionY);
-stream[1].addSource(functionZ);
+streams[1].addSource(functionX);
+streams[1].addSource(functionY);
+streams[1].addSource(functionZ);
 ```
 
 ## Cool! Whats next?

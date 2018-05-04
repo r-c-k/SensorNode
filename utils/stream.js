@@ -8,143 +8,149 @@ let IOTA = require('iota.lib.js');
 //##        TANGLESTREAM CONSTRUCTOR         ##
 //#############################################
 
-function STREAM (_stream) {
+class STREAM {
 
-  this.host = _stream.host || 'localhost';
-  this.port = _stream.port || 14265;
+  constructor (_stream) {
 
-  this.id = _stream.id || 'SensorNode';
-  this.location = _stream.location || 'Home';
-  this.sources = [];
+    this.host = _stream.host || '0.0.0.0';
+    this.port = _stream.port || 14265;
 
-  this.seed = _stream.seed || generateSeed();
-  this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
-  this.tag = _stream.tag || 'SENSORNODEROCKS';
+    this.id = _stream.id || 'SensorNode';
+    this.location = _stream.location || 'Home';
+    this.sources = [];
 
-  this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
-  this.busy = false;
+    this.seed = _stream.seed || this.generateSeed();
+    this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
+    this.tag = _stream.tag || 'SENSORNODEROCKS';
 
-  this.depth = _stream.depth || 3;
+    this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
+    this.busy = false;
 
-  this.initNode();
-}
+    this.depth = _stream.depth || 3;
 
-//#############################################
-//##            ADD DATA SOURCE              ##
-//#############################################
+    this.initNode();
+  }
 
-STREAM.prototype.addSource = function(_s) {
-  this.sources.push(_s);
-}
+  //#############################################
+  //##            ADD DATA SOURCE              ##
+  //#############################################
 
-//#############################################
-//##             HANDLE SOURCES              ##
-//#############################################
+  addSource (_s) {
+    this.sources.push(_s);
+  }
 
-STREAM.prototype.handle = function() {
+  //#############################################
+  //##             HANDLE SOURCES              ##
+  //#############################################
 
-  /* abort sending while first fetch or lock until message is send */
-  if (this.wait && this.busy)
- 	 return null;
+  handle () {
 
-   /* if (this.wait) */
-     this.busy = true;
+    /* abort sending while first fetch or lock until message is send */
+    if (this.wait && this.busy)
+   	 return null;
 
-  let self = this;
-  var data = []
+     /* if (this.wait) */
+       this.busy = true;
 
-  self.sources.forEach(function(s) {
-    s().then(result => {
-    data.push(result);
-       if (data.length == self.sources.length)
-       self.attachToTangle(data);
-   }).catch(err => { console.error(err); });
-  })
+    let self = this;
+    var data = []
 
-}
+    self.sources.forEach(func => {
+      func().then(result => {
+      data.push(result);
+         if (data.length == self.sources.length)
+         self.attachToTangle(data);
+     }).catch(err => { console.error(err); });
+    })
 
-//#############################################
-//##            ATTACH TO TANGLE             ##
-//#############################################
+  }
 
-STREAM.prototype.attachToTangle = function(_data) {
+  //#############################################
+  //##            ATTACH TO TANGLE             ##
+  //#############################################
 
- const scope = this;
- const time = Date.now();
- const ts = '\x1b[94m' + time + '\x1b[0m ';
+  attachToTangle (_data) {
 
- let json = {
-    'id':         this.id,
-    'location':   this.location,
-    'timestamp':  time,
-    'data':       _data,
- }
+   const scope = this;
+   const time = Date.now();
+   const ts = '\x1b[94m' + time + '\x1b[0m ';
 
- console.log('\nJSON (\x1b[94mTangle\x1b[0m):')
- console.log(json);
+   let json = {
+      'id':         this.id,
+      'location':   this.location,
+      'timestamp':  time,
+      'data':       _data,
+   }
 
- let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
- //console.log("\nTRYTES:\n" + trytes);
+   console.log('\nJSON (\x1b[94mTangle\x1b[0m):')
+   console.log(json);
 
- console.log('\n\x1b[93m[attaching]\x1b[0m\n');
+   let trytes = this.iota.utils.toTrytes(JSON.stringify(json));
+   //console.log("\nTRYTES:\n" + trytes);
 
- var transfersArray = [{
-       'address': this.rec_address,
-       'value': 0,
-       'message': trytes,
-       'tag': this.tag
-   }]
+   console.log('\n\x1b[93m[attaching ' + time + ']\x1b[0m\n');
 
-   /* PREPARE TRANSFERS */
-   this.iota.api.prepareTransfers(this.seed, transfersArray, function(err, bundle) {
+   var transfersArray = [{
+         'address': this.rec_address,
+         'value': 0,
+         'message': trytes,
+         'tag': this.tag
+     }]
 
-     if (err) {
-       console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
-       return -1;
-     } else {
+     /* PREPARE TRANSFERS */
+     this.iota.api.prepareTransfers(this.seed, transfersArray, function(err, bundle) {
 
-       /* PUSH TO TANGLE */
-       scope.iota.api.sendTrytes(bundle, scope.depth, 14, function(err, result) {
+       if (err) {
+         console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
+         return -1;
+       } else {
 
-           if (err) {
-             console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
-             return -2;
-           } else {
-             console.log(ts + '\x1b[32mATTACHED (hash: ' + result[0].hash + ')\x1b[0m');
-             /* if (scope.wait) */
-        	    scope.busy = false;
-           }
-       })
+         /* PUSH TO TANGLE */
+         scope.iota.api.sendTrytes(bundle, scope.depth, 14, function(err, result) {
 
-     }
+             if (err) {
+               console.log(ts + '\x1b[41mERROR\x1b[0m (' + err + ')');
+               return -2;
+             } else {
+               console.log(ts + '\x1b[32mATTACHED (hash: ' + result[0].hash + ')\x1b[0m');
+               /* if (scope.wait) */
+          	    scope.busy = false;
+             }
+         })
 
-   })
+       }
 
-}
+     })
 
-//#############################################
-//##            INITIALIZE IOTA              ##
-//#############################################
+  }
 
-STREAM.prototype.initNode = function() {
-  this.iota = new IOTA({
-      'host': this.host,
-      'port': this.port
-  });
-}
+  //#############################################
+  //##            INITIALIZE IOTA              ##
+  //#############################################
 
-//#############################################
-//##                 HELPER                  ##
-//#############################################
+  initNode () {
 
-function generateSeed () {
- var seed = "";
- var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+    this.iota = new IOTA({
+        'host': this.host,
+        'port': this.port
+    });
+  }
 
- for (var i = 0; i < 81; i++)
-   seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+  //#############################################
+  //##                 HELPER                  ##
+  //#############################################
 
- return seed;
+  generateSeed () {
+
+   var seed = "";
+   var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+
+   for (var i = 0; i < 81; i++)
+     seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+
+   return seed;
+  }
+
 }
 
 //#############################################

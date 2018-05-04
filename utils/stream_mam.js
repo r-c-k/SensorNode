@@ -9,173 +9,179 @@ let MAM = require('mam.node.js');
 //##          MAMSTREAM CONSTRUCTOR          ##
 //#############################################
 
-function STREAM (_stream) {
+class MAM_STREAM {
 
-  this.host = _stream.host || 'localhost';
-  this.port = _stream.port || 14265;
+  constructor (_stream) {
 
-  this.id = _stream.id || 'SensorNode';
-  this.location = _stream.location || 'Home';
-  this.sources = [];
+    this.host = _stream.host || '0.0.0.0';
+    this.port = _stream.port || 14265;
 
-  this.seed = _stream.seed || generateSeed();
-  this.tree = null;
+    this.id = _stream.id || 'SensorNode (MAM)';
+    this.location = _stream.location || 'Home';
+    this.sources = [];
 
-  this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
-  this.fetch = (_stream.fetch == true ? true : false);	/* enables permanent fetching*/
-  this.busy = false;
-  this.sync = false;
+    this.seed = _stream.seed || this.generateSeed();
+    this.tree = null;
 
-  this.initNode();
+    this.wait = (_stream.wait == false ? false : true);	/* discards packets till the current packet has been send */
+    this.fetch = (_stream.fetch == true ? true : false);	/* enables permanent fetching*/
+    this.busy = false;
+    this.sync = false;
 
-  // Initiate the mam state with the given seed at index 0.
-  this.mamState = MAM.init(this.iota, this.seed, 2, 0);
-  /* mamState = MAM.changeMode(mamState, 'restricted', password) */
-}
+    this.initNode();
 
-//#############################################
-//##            ADD DATA SOURCE              ##
-//#############################################
-
-STREAM.prototype.addSource = function(_s) {
-  this.sources.push(_s);
-}
-
-//#############################################
-//##              HANDLE SOURCES             ##
-//#############################################
-
-STREAM.prototype.handle = function() {
-
-  /* abort sending while first fetch or lock until message is send */
-  if (this.sync || (this.wait && this.busy))
- 	 return null;
-
-  /* if (this.wait) */
-    this.busy = true;
-
-  let self = this;
-  var data = []
-
-  self.sources.forEach(function(s) {
-    s().then(result => {
-    data.push(result);
-       if (data.length == self.sources.length)
-       	self.send(data);
-   }).catch(err => { console.error(err); });
-  })
-
-}
-
-//#############################################
-//##              INITIATE MAM               ##
-//#############################################
-
-STREAM.prototype.send = function(_data) {
-
- const scope = this;
- const time = Date.now();
- const ts = '\x1b[95m' + time + '\x1b[0m ';
-
- let json = {
-	'id':         this.id,
-	'location':   this.location,
-	'timestamp':  time,
-	'data':       _data,
+    // Initiate the mam state with the given seed at index 0.
+    this.mamState = MAM.init(this.iota, this.seed, 2, 0);
+    /* mamState = MAM.changeMode(mamState, 'restricted', password) */
   }
 
- // Fetch all the messages in the stream.
- fetchCount(json, scope).then(v => {
+  //#############################################
+  //##            ADD DATA SOURCE              ##
+  //#############################################
 
-   /* finished fetching up */
-   this.sync = false;
+  addSource (_s) {
+    this.sources.push(_s);
+  }
 
-   this.mamState = MAM.init(this.iota, this.seed, 2, v.messages.length);
-   /* mamState = MAM.changeMode(mamState, 'restricted', password) */
+  //#############################################
+  //##              HANDLE SOURCES             ##
+  //#############################################
 
-   let newMessage = JSON.stringify(json);
+  handle () {
 
-   publish(newMessage, scope).then(result => {
+    /* abort sending while first fetch or lock until message is send */
+    if (this.sync || (this.wait && this.busy))
+   	 return null;
 
-     console.log(ts + '\x1b[32mSENT (hash: ' + result[0].hash + ')\x1b[0m');
+    /* if (this.wait) */
+      this.busy = true;
 
-     /* if (scope.wait) */
-	  scope.busy = false;
+    let self = this;
+    var data = []
 
-   }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); })
+    self.sources.forEach(func => {
+      func().then(result => {
+      data.push(result);
+         if (data.length == self.sources.length)
+         	self.send(data);
+     }).catch(err => { console.error(err); });
+    })
 
- }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); });
+  }
 
-}
+  //#############################################
+  //##              INITIATE MAM               ##
+  //#############################################
 
-//#############################################
-//##            INITIALISE IOTA              ##
-//#############################################
+  send (_data) {
 
-STREAM.prototype.initNode = function() {
-  this.iota = new IOTA({
-      'host': this.host,
-      'port': this.port
-  });
-}
+   const scope = this;
+   const time = Date.now();
+   const ts = '\x1b[95m' + time + '\x1b[0m ';
 
-//#############################################
-//##                  MaM                    ##
-//#############################################
-
-async function fetchCount (_json, _scope) {
-
-    let trytes = _scope.iota.utils.toTrytes('START');
-    let message = MAM.create(_scope.mamState, trytes);
-
-    if (_scope.tree == null) {
-
-      console.log('\n\x1b[45mThe first root:\x1b[0m');
-      console.log(message.root);
-      _scope.sync = true;
-
-    } else { ++_scope.tree.messages.length; }
-
-    console.log('\nJSON (\x1b[95mMaM\x1b[0m):');
-    console.log(_json);
-    console.log();
-
-    if (_scope.fetch || _scope.tree == null) {
-	 // Fetch all the messages upward from the first root.
-	 console.log('\x1b[93m[fetching]\x1b[0m');
-	 _scope.tree = await MAM.fetch(message.root, 'public', null, null);
-	 /* _scope.tree = await MAM.fetch(message.root, 'restricted', password, null); */
+   let json = {
+  	'id':         this.id,
+  	'location':   this.location,
+  	'timestamp':  time,
+  	'data':       _data,
     }
 
-    return _scope.tree;
-}
+   // Fetch all the messages in the stream.
+   this.fetchCount(json, scope).then(v => {
 
-async function publish (_packet, _scope) {
-    let trytes = _scope.iota.utils.toTrytes(_packet)
-    let message = MAM.create(_scope.mamState, trytes);
-    // Set the mam state so we can keep adding messages.
-    _scope.mamState = message.state;
-    // Attach the message.
-    console.log('\x1b[93m[sending]\x1b[0m\n');
-    return await MAM.attach(message.payload, message.address);
-}
+     /* finished fetching up */
+     this.sync = false;
 
-//#############################################
-//##                 HELPER                  ##
-//#############################################
+     this.mamState = MAM.init(this.iota, this.seed, 2, v.messages.length);
+     /* mamState = MAM.changeMode(mamState, 'restricted', password) */
 
-function generateSeed () {
- var seed = "";
- var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+     this.publish(json, scope).then(result => {
 
- for (var i = 0; i < 81; i++)
-   seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+       console.log(ts + '\x1b[32mSENT (hash: ' + result[0].hash + ')\x1b[0m');
 
- return seed;
+       /* if (scope.wait) */
+  	  scope.busy = false;
+
+     }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); })
+
+   }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); });
+
+  }
+
+  //#############################################
+  //##            INITIALIZE IOTA              ##
+  //#############################################
+
+  initNode () {
+    this.iota = new IOTA({
+        'host': this.host,
+        'port': this.port
+    });
+  }
+
+  //#############################################
+  //##                  MaM                    ##
+  //#############################################
+
+  async fetchCount (_json, _scope) {
+
+      let trytes = _scope.iota.utils.toTrytes('START');
+      let message = MAM.create(_scope.mamState, trytes);
+
+      if (_scope.tree == null) {
+
+        console.log('\n\x1b[45mThe first root:\x1b[0m');
+        console.log(message.root);
+        _scope.sync = true;
+
+      } else { ++_scope.tree.messages.length; }
+
+      console.log('\nJSON (\x1b[95mMaM\x1b[0m):');
+      console.log(_json);
+      console.log();
+
+      if (_scope.fetch || _scope.tree == null) {
+  	 // Fetch all the messages upward from the first root.
+  	 console.log('\x1b[93m[fetching]\x1b[0m');
+  	 _scope.tree = await MAM.fetch(message.root, 'public', null, null);
+  	 /* _scope.tree = await MAM.fetch(message.root, 'restricted', password, null); */
+      }
+
+      return _scope.tree;
+  }
+
+  async publish (_json, _scope) {
+
+      let packet = JSON.stringify(_json);
+
+      let trytes = _scope.iota.utils.toTrytes(packet)
+      let message = MAM.create(_scope.mamState, trytes);
+      // Set the mam state so we can keep adding messages.
+      _scope.mamState = message.state;
+      // Attach the message.
+      console.log('\x1b[93m[sending ' + _json.timestamp +']\x1b[0m\n');
+      return await MAM.attach(message.payload, message.address);
+  }
+
+  //#############################################
+  //##                 HELPER                  ##
+  //#############################################
+
+  generateSeed () {
+
+   var seed = "";
+   var trytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+
+   for (var i = 0; i < 81; i++)
+     seed += trytes.charAt(Math.floor(Math.random() * trytes.length));
+
+   return seed;
+  }
+
 }
 
 //#############################################
 //##                   EXPORTS               ##
 //#############################################
 
-module.exports = STREAM;
+module.exports = MAM_STREAM;
