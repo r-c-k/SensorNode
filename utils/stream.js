@@ -12,8 +12,10 @@ class STREAM {
 
   constructor (_stream) {
 
-    this.host = _stream.host || '0.0.0.0';
-    this.port = _stream.port || 14265;
+    this.iota = new IOTA({
+        'host': _stream.host || '0.0.0.0',
+        'port': _stream.port || 14265
+    });
 
     this.id = _stream.id || 'SensorNode';
     this.location = _stream.location || 'Home';
@@ -122,18 +124,6 @@ class STREAM {
 
      })
 
-  }
-
-  //#############################################
-  //##            INITIALIZE IOTA              ##
-  //#############################################
-
-  initNode () {
-
-    this.iota = new IOTA({
-        'host': this.host,
-        'port': this.port
-    });
   }
 
   //#############################################

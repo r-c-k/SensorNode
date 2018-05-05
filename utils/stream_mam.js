@@ -13,8 +13,10 @@ class MAM_STREAM {
 
   constructor (_stream) {
 
-    this.host = _stream.host || '0.0.0.0';
-    this.port = _stream.port || 14265;
+    this.iota = new IOTA({
+        'host': _stream.host || '0.0.0.0',
+        'port': _stream.port || 14265
+    });
 
     this.id = _stream.id || 'SensorNode';
     this.location = _stream.location || 'Home';
@@ -27,8 +29,6 @@ class MAM_STREAM {
     this.fetch = (_stream.fetch == true ? true : false);	/* enables permanent fetching*/
     this.busy = false;
     this.sync = false;
-
-    this.initNode();
 
     // Initiate the mam state with the given seed at index 0.
     this.mamState = MAM.init(this.iota, this.seed, 2, 0);
@@ -106,17 +106,6 @@ class MAM_STREAM {
 
    }).catch(err => { console.error(ts + '\x1b[41mERROR\x1b[0m (' + err + ')'); });
 
-  }
-
-  //#############################################
-  //##            INITIALIZE IOTA              ##
-  //#############################################
-
-  initNode () {
-    this.iota = new IOTA({
-        'host': this.host,
-        'port': this.port
-    });
   }
 
   //#############################################
