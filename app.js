@@ -31,11 +31,11 @@ async function readSensor () {
 /* coordinate generators (for testing) */
 
 function lat () {
-	return Math.round((Math.random() * 0.05 + 40.65) * 100) / 100;
+	return Math.round((Math.random() * 0.05 + 40.65) * 1000) / 1000;
 }
 
 function lng () {
-	return Math.round((Math.random() * 0.05 + -73.91) * 100) / 100;
+	return Math.round((Math.random() * 0.05 + -73.91) * 1000) / 1000;
 }
 
 //#############################################
