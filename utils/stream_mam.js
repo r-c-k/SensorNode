@@ -19,7 +19,7 @@ class MAM_STREAM {
     });
 
     this.id = _stream.id || 'SensorNode';
-    this.location = _stream.location || 'Home';
+    this.location = _stream.location || {'lat': 40.65, 'lng': -73.91};
     this.sources = [];
 
     this.seed = _stream.seed || this.generateSeed();

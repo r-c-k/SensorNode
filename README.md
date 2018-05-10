@@ -18,7 +18,7 @@ Parameter | Function | Default
 host | (Remote-) node we're connecting to. | 0.0.0.0
 port | Iota-api port on the node. | 14265
 id | Identifies the streamobject. | "SensorNode"
-location | Nodes location, eg. "Home" or "52.26°N 13.42°E" [...]. | "Home"
+location | Nodes location, eg. 'lat': 52.26 'lng': 13.42. | {'lat': 40.65, 'lng': -73.91}
 seed | Seed for creating transactions/MAM-messages. | [generated]
 rec | Receiving address (tanglestream only). | "GPB9PBNCJTPGF..."
 tag | Tag for Transactions (tanglestream only). | "SENSORNODEROCKS"
