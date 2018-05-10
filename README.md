@@ -7,6 +7,22 @@ Either data is being pushed to [Tangle](https://thetangle.org/) or send as [Mask
 
 (*Image by [Wyn Tiedmers](https://www.wynt.de/)*)
 
+### Installation:
+
+Clone this repository:
+```
+git clone https://github.com/rckey/SensorNode
+```
+Install node_modules:
+```
+cd SensorNode/
+npm install
+```
+Install mam.node.js:
+```
+cd node_modules/
+git clone https://github.com/rckey/mam.node.js
+```
 
 ### Creating streams:
 
@@ -70,7 +86,7 @@ streams[1].addSource(functionZ);
 
 ## Cool! Whats next?
 
-Run with ``` node app [delay] ``` where delay specifies a timeout between each push (default 60 seconds).
+Run with ``` npm start [delay] ``` where delay specifies a timeout between each push (default 60 seconds).
 
 Thats it. Have fun providing data over the iota protocol. ;)
 
