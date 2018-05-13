@@ -19,7 +19,7 @@ class STREAM {
 
     this.id = _stream.id || 'SensorNode';
     this.location = _stream.location || {'lat': 40.65, 'lng': -73.91};
-    this.sources = [];
+    this.source = null;
 
     this.seed = _stream.seed || this.generateSeed();
     this.rec_address = _stream.rec || 'GPB9PBNCJTPGFZ9CCAOPCZBFMBSMMFMARZAKBMJFMTSECEBRWMGLPTYZRAFKUFOGJQVWVUPPABLTTLCIA'; /*nowhere*/
@@ -29,8 +29,6 @@ class STREAM {
     this.busy = false;
 
     this.depth = _stream.depth || 3;
-
-    this.initNode();
   }
 
   //#############################################
@@ -38,11 +36,11 @@ class STREAM {
   //#############################################
 
   addSource (_s) {
-    this.sources.push(_s);
+    this.source = _s;
   }
 
   //#############################################
-  //##             HANDLE SOURCES              ##
+  //##             HANDLE SOURCE               ##
   //#############################################
 
   handle () {
@@ -54,16 +52,9 @@ class STREAM {
      /* if (this.wait) */
        this.busy = true;
 
-    let self = this;
-    var data = []
-
-    self.sources.forEach(func => {
-      func().then(result => {
-      data.push(result);
-         if (data.length == self.sources.length)
-         self.attachToTangle(data);
-     }).catch(err => { console.error(err); });
-    })
+       this.source().then(data => {
+         this.attachToTangle(data);
+       }).catch(error => {console.log(error);})
 
   }
 

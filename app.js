@@ -46,7 +46,7 @@ function lng () {
 streams.push(new MAM_STREAM ({
   'host': 'http://0.0.0.0',
   'port':  14265,
-  'id':   'SensorNode (MAM)',
+  'id':   'SensorNode',
   'location':  {'lat': lat(), 'lng': lng()}
 }))
 
@@ -56,14 +56,14 @@ streams.push(new STREAM ({
   'host': 'http://0.0.0.0',
   'port':  14265,
   'id':   'SensorNode',
-  'location':  '52.26°N 13.42°E',
+  'location':  {'lat': lat(), 'lng': lng()},
   'tag':  'SENSORNODEROCKS',
   'depth': 3
 }))
 */
 
 streams[0].addSource(readSensor);
-// streams[1].addSource(readSensor);
+//streams[1].addSource(readSensor);
 
 //#############################################
 //##              EXECUTION HEAD             ##

@@ -72,16 +72,15 @@ eg:
 
 ```
 async function functionFoo () {
-	return await sensor.read();
+	return await sensorA.read();
+}
+async function functionBar () {
+	return await sensorB.read();
 }
 ```
 ```
 streams[0].addSource(functionFoo);
-streams[0].addSource(functionBar);
-
-streams[1].addSource(functionX);
-streams[1].addSource(functionY);
-streams[1].addSource(functionZ);
+streams[1].addSource(functionBar);
 ```
 
 ## Cool! Whats next?
