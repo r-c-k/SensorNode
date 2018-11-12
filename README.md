@@ -92,5 +92,3 @@ Thats it. Have fun providing data over the iota protocol. ;)
 ## You want to donate?
 
 IOTA: OZPVZDEHSIOJXVVPYKKR9DQVGKXOLIAAMDAEREMQLDYMVOAGBAKC9CMKBRZAAWLMYQCNCPEIPYQBZMUSDODQVGPLDW
-
-<img src="https://cdn.tngl.me/rck/donation/qr.svg" alt="donation@rck" />
