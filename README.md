@@ -88,7 +88,3 @@ streams[1].addSource(functionBar);
 Run with ``` npm start [delay] ``` where delay specifies a timeout between each push (default 60 seconds).
 
 Thats it. Have fun providing data over the iota protocol. ;)
-
-## You want to donate?
-
-IOTA: OZPVZDEHSIOJXVVPYKKR9DQVGKXOLIAAMDAEREMQLDYMVOAGBAKC9CMKBRZAAWLMYQCNCPEIPYQBZMUSDODQVGPLDW
